@@ -1,0 +1,20 @@
+log_path: /var/log/ejabberd/extauth.log
+
+cas:
+  base_url: https://auth.example.com
+  fake_service_url: http://example.com/something
+
+active_record:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: test-mysql2_development
+  pool: 5
+  username: root
+  password:
+  socket: /tmp/mysql.sock
+
+model:
+  user_model_name: Users
+  username_field: email
+  password_field: encrypted_password
