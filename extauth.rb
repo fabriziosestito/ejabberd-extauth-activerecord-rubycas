@@ -42,7 +42,8 @@ def active_record_authenticate(username, password)
 end
  
 def auth(username, password)
-  username.gsub!('+','@')
+  # dirty email hack
+  # username.gsub!('+','@') 
 
   tokens = password.split(",") # if CAS pwd, it will look like https://localhost,ST-765-SX3dfbUFbTOop7LVJmW-cas
  
