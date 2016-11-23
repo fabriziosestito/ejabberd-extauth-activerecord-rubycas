@@ -42,11 +42,10 @@ def active_record_authenticate(username, password)
 end
  
 def auth(username, password)
-  # dirty email hack
-  # username.gsub!('+','@') 
+  username.gsub!('+','@')
 
   tokens = password.split(",") # if CAS pwd, it will look like https://localhost,ST-765-SX3dfbUFbTOop7LVJmW-cas
- 
+
   if !tokens[1].nil? and tokens[0] == @config['cas']['fake_service_url'] and tokens[1] =~ /^ST-/
     @logger.info "Authenticating #{username} through CAS"
     return cas_authenticate(username, tokens[1])
@@ -55,8 +54,8 @@ def auth(username, password)
     return active_record_authenticate(username, password)
   end
  
-rescue Exception
-  return false
+#rescue Exception
+#  return false
 end
 
 @logger.info "Starting ejabberd authentication service"
@@ -71,13 +70,14 @@ loop do
       length = msg.unpack('n').first
  
       msg = $stdin.read(length)
-      cmd, *data = msg.split(":")
-      pwd = msg.split(",")[1] rescue ""
- 
-      @logger.info "Incoming Request: '#{cmd}'"
+      cmd, data = msg.split(":" ,2)
+      user, data = data.split(":" ,2)
+      pwd = data.split(":", 2)[1]
+      
+      @logger.info "Incoming Request: '#{cmd} #{user}'"
       success = case cmd
                   when "auth"
-                    auth(data[0], data[2])
+                    auth(user, pwd)
                   else
                     false
                 end
